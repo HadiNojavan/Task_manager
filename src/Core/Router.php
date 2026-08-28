@@ -100,7 +100,6 @@ class Router {
 
         return $controller->$action();
     }
-
     
     $this->abort();
 }

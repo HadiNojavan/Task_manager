@@ -17,7 +17,7 @@ class Tasks
     public function index()//this method will get all of tasks from Models/Task class and done 
     {
         $tasks = $this->task->all();
-        
+
         if (!$tasks)
             abort();
 
@@ -36,6 +36,15 @@ class Tasks
 
         header('Content-Type: application/json');
 
+        echo json_encode($task);
+
+    }
+
+    public function store(){
+        $data=file_get_contents('php://input');//here we have to featch body of post man 
+        $data=json_decode($data,true);//but postman body type is json we have to convert it to arrey php from =>
+        $task = $this->task->create($data);
+        header('Content-Type: application/json');
         echo json_encode($task);
 
     }
