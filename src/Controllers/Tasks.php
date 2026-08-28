@@ -48,4 +48,12 @@ class Tasks
         echo json_encode($task);
 
     }
+
+    public function update($id){//here we update one task by id
+        $upt=file_get_contents('php://input');//here we fetch data from postman that we want to update 
+        $upt=json_decode($upt,true);
+        $task = $this->task->update($id,$upt);
+        header('Content-Type: application/json');
+        echo json_encode($task);
+    }
 }

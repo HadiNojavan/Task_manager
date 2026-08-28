@@ -31,6 +31,30 @@ class Task
                     $data['status'],$data['created_by']]
             )->fetch();
     }
+
+    public function update($id,$upt){//first we have to get columns of our table 
+        $task=$this->get($id);
+        $allowedKeys=$this->get_key_columns();//we get columns that are exit in table 
+
+        foreach ($upt as $key => $value){
+            if (in_array($key, $allowedKeys))//so client can not add another columns
+                $this->database->query("UPDATE tasks SET $key = ? WHERE id=?", [$value,$id]);
+        }
+        return $this->get($id);
+    }
+
+    public function get_key_columns(){
+        $res=[];
+        $data=$this->database
+            ->query("SELECT column_name FROM information_schema.columns WHERE table_name ='tasks'")
+            ->fetchAll();
+        
+        foreach ($data as $row) {
+           $res[] = $row['column_name'];
+            }
+        return $res;
+    }
+
 }
 
     
