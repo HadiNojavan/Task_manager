@@ -1,0 +1,11 @@
+look in html forms we have only 2 request method post and get => so SERVER['REQUEST_METHOD'] is GER  OR POST
+but in postman we can have send diffrent type of request method so SERVER['REQUEST_METHOD'] can be delete or patch but
+we must include it in Router file 
+
+when we send something like GET http://localhost:8082/api/tasks/8?name=hadi in postman 
+our $_SERVER['REQUEST_URI'] is 
+    'path'  => '/api/tasks/8',
+    'query' => 'name=hadi'
+
+that in our Router we want path part  
+

@@ -59,7 +59,7 @@ class Router {
             continue;
         }
 
-        // we dive /api/tasks/5 to  [ "", "api", "tasks", "5" ]
+        // we divide /api/tasks/5 to  [ "", "api", "tasks", "5" ]
         //or for route /api/tasks/{id}  [ "", "api", "tasks", "{id}" ]
         $routeParts = explode('/', $route['uri']);
         $uriParts   = explode('/', $uri);

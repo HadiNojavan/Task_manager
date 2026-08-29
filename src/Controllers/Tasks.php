@@ -17,7 +17,6 @@ class Tasks
     public function index()//this method will get all of tasks from Models/Task class and done 
     {
         $tasks = $this->task->all();
-
         if (!$tasks)
             abort(404,$message="no matching tasks found in database");
 
@@ -40,29 +39,40 @@ class Tasks
 
     }
 
-    public function store(){
+    public function store(){//here we create new task
         $data=file_get_contents('php://input');//here we have to featch body of post man 
+
         $data=json_decode($data,true);//but postman body type is json we have to convert it to arrey php from =>
+
         $task = $this->task->create($data);
+
         header('Content-Type: application/json');
+
         echo json_encode($task);
 
     }
 
     public function update($id){//here we update one task by id
-        $upt=file_get_contents('php://input');//here we fetch data from postman that we want to update 
+        $upt=file_get_contents('php://input');//here we fetch id from postman that we want to update 
+
         $upt=json_decode($upt,true);
+
         $task = $this->task->update($id,$upt);
+
         header('Content-Type: application/json');
+
         echo json_encode($task);
     }
 
     public function destroy($id){
     $task = $this->task->get($id);
+
     if (!$task) 
         abort(404, 'No matching task found in database to delete');
-    $task = $this->task->destroy($id);
+    $this->task->destroy($id);
+
     header('Content-Type: application/json');
+    
     echo json_encode(['message'=>"task whith id={$id} has been deleted"]);
 }
 }

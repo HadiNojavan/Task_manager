@@ -18,8 +18,7 @@ $router = new Router($db);
 //i will add all of my routes path here 
 require_once __DIR__ . '/../routes/api.php';
 
-
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
-$method = strtoupper($_POST["_method"] ?? $_SERVER["REQUEST_METHOD"]);
-
+//because we use postman we can have all type of request method like patch 
+$method = strtoupper($_SERVER["REQUEST_METHOD"]);
 $router->route($uri,$method);
