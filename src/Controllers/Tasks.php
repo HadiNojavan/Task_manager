@@ -20,7 +20,7 @@ class Tasks
 
         if (!$tasks)
             abort(404,$message="no matching tasks found in database");
-        
+
         header('Content-Type: application/json');
 
         echo json_encode($tasks);
@@ -56,4 +56,13 @@ class Tasks
         header('Content-Type: application/json');
         echo json_encode($task);
     }
+
+    public function destroy($id){
+    $task = $this->task->get($id);
+    if (!$task) 
+        abort(404, 'No matching task found in database to delete');
+    $task = $this->task->destroy($id);
+    header('Content-Type: application/json');
+    echo json_encode(['message'=>"task whith id={$id} has been deleted"]);
+}
 }

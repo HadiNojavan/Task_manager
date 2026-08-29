@@ -43,6 +43,11 @@ class Task
         return $this->get($id);
     }
 
+
+     public function destroy($id){
+        $this->database->query("DELETE FROM tasks WHERE id =?", [$id]);
+     }
+     
     public function get_key_columns(){
         $res=[];
         $data=$this->database
