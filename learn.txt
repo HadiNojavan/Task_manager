@@ -9,3 +9,5 @@ our $_SERVER['REQUEST_URI'] is
 
 that in our Router we want path part  
 
+ cd /home/hadi/code/php/php_tamrin/Task-manager; php -S localhost:8082 -t public;
+ cd /home/hadi/Desktop/ ;  php -S localhost:8081 adminer.php;

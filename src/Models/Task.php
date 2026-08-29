@@ -4,11 +4,12 @@ namespace src\Models;
 
 use src\Core\Database;
 
-class Task
-{
-    public function __construct(
-        protected Database $database
-    ) {
+class Task{
+
+    protected $database;
+    
+    public function __construct(Database $database) {
+        $this->database=$database;
     }
 
     public function all()//this method will featch all data from database
