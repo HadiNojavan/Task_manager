@@ -101,7 +101,7 @@ class Router {
         return $controller->$action();
     }
     
-    $this->abort();
+    $this->abort(404,$message="no matching router uri found ");
 }
 
     public function routeee($uri, $method){
@@ -145,9 +145,13 @@ class Router {
 
 
     
-   public function abort($code = 404){
+   public function abort($code =404,$massage=null){
     http_response_code($code);
     header('Content-Type: application/json');
+    if ($massage){
+        echo json_encode([ 'error' => $code ,'massage'=>$massage]);
+        die();
+    }
     echo json_encode([ 'error' => $code ]);
     die();
 }

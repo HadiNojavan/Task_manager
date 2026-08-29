@@ -19,8 +19,8 @@ class Tasks
         $tasks = $this->task->all();
 
         if (!$tasks)
-            abort();
-
+            abort(404,$message="no matching tasks found in database");
+        
         header('Content-Type: application/json');
 
         echo json_encode($tasks);
@@ -32,7 +32,7 @@ class Tasks
         $task = $this->task->get($id);
 
         if (!$task)
-            abort();
+            abort(404,"no matching task found in database");
 
         header('Content-Type: application/json');
 
