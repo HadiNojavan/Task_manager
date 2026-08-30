@@ -4,14 +4,16 @@ namespace src\Core;
 /* 
 
 */
+use src\Middleware\TokenAuth;
+
 class Router {
 
     protected $routes=[];
-    protected Database $database;
+    protected Database $db;
 
-    public function __construct(Database $database)
+    public function __construct(Database $db)
     {
-        $this->database = $database;
+        $this->db = $db;
     }
 
     protected function add($method,$uri,$controller){
@@ -83,15 +85,16 @@ class Router {
             }
         }
 
-        // 5. Middleware
+        // Middleware 
         if ($route['middleware']) {
-            Middleware::resolve($route['middleware']);
+            $tokenauth=new TokenAuth($this->db);
+            $tokenauth->handle();
         }
 
-        // 6. Controller + Action
+        //Controller + Action
         [$controller, $action] = $route['controller'];
 
-        $controller = new $controller($this->database);
+        $controller = new $controller($this->db);
 
         // if we have params id in uri 
         if ($params) {

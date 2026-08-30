@@ -35,12 +35,16 @@ class Login{
       // dd($userPassword);
         if (password_verify($password, $userPassword)) {
             // password is correct
-            echo json_encode(['message'=>"you have logined"]);
-            return ;
+            //this create 32random charactor that we use for AUTH  
+            $token = bin2hex(random_bytes(16));
+            $this->user->saveToken($username, $token);
+
+            http_response_code(200);
+            echo json_encode(['message' => 'Login successful','token' => $token]);
+            return;
         }
 
+        //password is not correct
         echo json_encode(['error'=>"your password for account {$username} is not correct. your given password: {$password}"]);
     }
-
-
 }

@@ -32,5 +32,16 @@ class User{
             ->query('SELECT password FROM users WHERE username=?',[$username])
             ->fetch();
     }
+
+    public function savetoken($username,$token){
+        return $this->database->query("UPDATE users SET api_token = ? WHERE username = ?", [$token, $username])
+        ->fetch();
+    }
+
+    public function findtoken($token){
+        return $this->database->query('SELECT api_token FROM users WHERE api_token=?',[$token])
+            ->fetch();
+    }
+
     }
     

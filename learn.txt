@@ -9,5 +9,13 @@ our $_SERVER['REQUEST_URI'] is
 
 that in our Router we want path part  
 
+file_get_contents('php://input') => this get body of json file that send request in postman 
+
+getallheaders()=> this come from header that we revive token 
+
+when we login succesfully we give user token then in postman we save that token as  pm.environment.set("token", response.token);
+then in each request we put {{token}} in auth part that send our token with header in postman 
+in our code middleware part check that if this token exits or not 
+if not exits so our user forexample must first login to create new task 
  cd /home/hadi/code/php/php_tamrin/Task-manager; php -S localhost:8082 -t public;
  cd /home/hadi/Desktop/ ;  php -S localhost:8081 adminer.php;
