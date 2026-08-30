@@ -24,7 +24,13 @@ class User{
         return $this->database
             ->query('SELECT username FROM users WHERE username=?',[$username])
             ->fetch();
-        
+    }
+
+    public function findpassword($username){//to check that our new username exits in database or not 
+
+        return $this->database
+            ->query('SELECT password FROM users WHERE username=?',[$username])
+            ->fetch();
     }
     }
     

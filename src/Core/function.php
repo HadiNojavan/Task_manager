@@ -22,3 +22,12 @@ function abort($code =404,$message=null){
     echo json_encode([ 'error' => $code ]);
     die();
 }
+
+function dd($value)
+{
+    echo "<pre>";
+    var_dump($value);
+    echo "</pre>";
+
+    die();
+}
