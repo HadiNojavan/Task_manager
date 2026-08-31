@@ -17,15 +17,22 @@ class Tasks
         $this->user = new User($database); 
     }
 
-    public function index($authUser = null)//this method will get all of tasks from Models/Task class and done 
+    public function index($authUser)//this method will get all of tasks from Models/Task class and done 
     {
-        $tasks = $this->task->all();
+        if ($authUser['role']==="admin"){
+            $tasks = $this->task->all();
         if (!$tasks)
             abort(404,$message="no matching tasks found in database");
 
         header('Content-Type: application/json');
 
         echo json_encode($tasks);
+        return;
+        }
+        $user_id=$authUser['id'];
+        $tasks = $this->user->tasks($user_id);
+        header('Content-Type: application/json');
+        echo json_encode($tasks ?: []);
 
     }
 
@@ -46,6 +53,7 @@ class Tasks
         $data=file_get_contents('php://input');//here we have to featch body of post man 
 
         $data=json_decode($data,true);//but postman body type is json we have to convert it to arrey php from =>
+        $data['created_by'] = $authUser['id'];
 
         $task = $this->task->create($data);
 

@@ -69,6 +69,10 @@ class Task{
     return $res;
 }
 
+    public function task_id($taskid){
+        return $this->database->query("SELECT * FROM tasks WHERE id=?",[$taskid])->fetch();
+    }
+
 }
 
     

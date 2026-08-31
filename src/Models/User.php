@@ -54,6 +54,10 @@ class User{
         return $this->db->query('SELECT id,username,role FROM users',[])
             ->fetchAll();
     }
+    public function findByuserid($id){
+        return $this->db->query('SELECT id FROM users WHERE id=?',[$id])
+            ->fetch();
+    }
     
 
     }
