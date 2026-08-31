@@ -13,18 +13,28 @@ class Task_User
         $this->db = $db;
     }
 
-    public function tasks_userid($userid)
-    {
-        return $this->db
-            ->query('SELECT * FROM   task_management WHERE user_id = ?', [$userid])
-            ->fetchAll();
-    }
+    
 
     public function assign($taskId, $userId)
-    {
-        return $this->db
-            ->query('INSERT INTO  task_management (task_id, user_id) VALUES (?, ?) RETURNING *', [$taskId, $userId])
-            ->fetch();
+{
+        try {
+
+            return $this->db->query( 'INSERT INTO task_user (task_id, user_id) VALUES (?, ?) RETURNING *',
+                    [$taskId, $userId] )->fetch();
+
+        } catch (\PDOException $e) {
+
+            if ($e->getCode() === '23505') {//اگر ردیف تکراری در جدول ثبت شود خطا میدهد 
+                abort(409, 'This task is already assigned to this user');
+            }
+
+            throw $e;
+        }
+}
+
+    public function tasks_userid($userid){
+        
+        return $this->db->query('SELECT tasks.* FROM tasks JOIN task_user on tasks.id=task_user.task_id WHERE task_user.user_id = ?', [$userid]) ->fetchAll();
     }
 
 

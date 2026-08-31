@@ -11,7 +11,7 @@ use src\Controllers\Login;
 use src\Controllers\TaskManagement;
 use src\Controllers\Users;
 
-$router->get('/api/tasks', [Tasks::class, 'index']); // here we get all tasks from database that method in controllers is index to get all info 
+//$router->get('/api/tasks', [Tasks::class, 'index']); // here we get all tasks from database that method in controllers is index to get all info 
 $router->get('/api/tasks/{id}', [Tasks::class, 'show']);//here we get only one task by id 
 $router->post('/api/tasks', [Tasks::class, 'store'])->only('auth');//here i create new task 
 $router->patch('/api/tasks/{id}', [Tasks::class, 'update'])->only('auth');//this update out task by id
@@ -24,6 +24,12 @@ $router->post('/api/login', [Login::class, 'login']);
 
 $router->get('/api/my-tasks', [Tasks::class, 'myTasks'])->only('auth');
 
-$router->post('/api/tasks/{id}/assign', [TaskManagement::class, 'assign'])->only('auth');
 
+//here admin ger all user info 
 $router->get('/api/users', [Users::class, 'all'])->only('admin');
+
+//here admin assing one task to many users 
+$router->post('/api/tasks/{id}/assign', [TaskManagement::class, 'assign'])->only('admin');
+
+//GET /api/my-tasks
+$router->get('/api/tasks', [Tasks::class, 'index'])->only('auth');

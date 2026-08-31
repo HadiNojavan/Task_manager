@@ -99,7 +99,7 @@ class Router {
                 $role= new Authorization($this->db);
                 $role_admin=$role->check_role($authUser);
                 if (!$role_admin){
-                    abort(403,'access denied only for admin');
+                    abort(403,'access denied: only for admin');
                 }
             }
         }
@@ -111,10 +111,19 @@ class Router {
 
         // if we have params id in uri 
         if ($params) {
+
+        if ($authUser !== null) {
             return $controller->$action($params['id'], $authUser);
         }
 
-        return $controller->$action($authUser); 
+        return $controller->$action($params['id']);
+    }
+
+    if ($authUser !== null) {
+        return $controller->$action($authUser);
+    }
+
+    return $controller->$action();
     }
     
     $this->abort(404,$message="no matching router uri found ");
