@@ -8,12 +8,22 @@ use src\Controllers\Tasks;
 use src\Controllers\Register;
 use src\Controllers\Login;
 
+use src\Controllers\TaskManagement;
+use src\Controllers\Users;
+
 $router->get('/api/tasks', [Tasks::class, 'index']); // here we get all tasks from database that method in controllers is index to get all info 
 $router->get('/api/tasks/{id}', [Tasks::class, 'show']);//here we get only one task by id 
 $router->post('/api/tasks', [Tasks::class, 'store'])->only('auth');//here i create new task 
-$router->patch('/api/tasks/{id}', [Tasks::class, 'update']);//this update out task by id
-$router->delete('/api/tasks/{id}', [Tasks::class, 'destroy']);//here we can delete one task by id 
+$router->patch('/api/tasks/{id}', [Tasks::class, 'update'])->only('auth');//this update out task by id
+$router->delete('/api/tasks/{id}', [Tasks::class, 'destroy'])->only('auth');//here we can delete one task by id 
 
 $router->post('/api/register', [Register::class, 'register_new_user']);//to register new user
 
 $router->post('/api/login', [Login::class, 'login']);
+
+
+$router->get('/api/my-tasks', [Tasks::class, 'myTasks'])->only('auth');
+
+$router->post('/api/tasks/{id}/assign', [TaskManagement::class, 'assign'])->only('auth');
+
+$router->get('/api/users', [Users::class, 'all'])->only('admin');

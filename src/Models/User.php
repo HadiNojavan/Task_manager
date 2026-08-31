@@ -6,42 +6,55 @@ use src\Core\Database;
 
 
 class User{
-    protected $database;
+    protected $db;
     
-    public function __construct(Database $database) {
-        $this->database=$database;
+    public function __construct(Database $db) {
+        $this->db=$db;
     }
 
-    public function create($username, $password){//create new user in database
+    public function create($username, $password){//create new user in db
 
-    return $this->database->query( "INSERT INTO users (username, password)VALUES (?, ?) RETURNING *",
+    return $this->db->query( "INSERT INTO users (username, password)VALUES (?, ?) RETURNING *",
             [$username, $password])
         ->fetch();
 }
 
-    public function findByUsername($username){//to check that our new username exits in database or not 
+    public function findByUsername($username){//to check that our new username exits in db or not 
 
-        return $this->database
+        return $this->db
             ->query('SELECT username FROM users WHERE username=?',[$username])
             ->fetch();
     }
 
-    public function findpassword($username){//to check that our new username exits in database or not 
+    public function findpassword($username){//to check that our new username exits in db or not 
 
-        return $this->database
+        return $this->db
             ->query('SELECT password FROM users WHERE username=?',[$username])
             ->fetch();
     }
 
     public function savetoken($username,$token){
-        return $this->database->query("UPDATE users SET api_token = ? WHERE username = ?", [$token, $username])
+        return $this->db->query("UPDATE users SET api_token = ? WHERE username = ?", [$token, $username])
         ->fetch();
     }
 
     public function findtoken($token){
-        return $this->database->query('SELECT api_token FROM users WHERE api_token=?',[$token])
+        return $this->db->query('SELECT id,username,role FROM users WHERE api_token=?',[$token])
             ->fetch();
     }
+
+   public function tasks($userId){
+        $taskUser = new Task_User($this->db);
+        return $taskUser->tasks_userid($userId);
+
+    }
+
+
+    public function getuserinfo(){
+        return $this->db->query('SELECT id,username,role FROM users',[])
+            ->fetchAll();
+    }
+    
 
     }
     

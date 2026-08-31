@@ -1,10 +1,12 @@
 <?php
 namespace src\Core;
 
+
 /* 
 
 */
 use src\Middleware\TokenAuth;
+use src\Controllers\Authorization;
 
 class Router {
 
@@ -86,9 +88,20 @@ class Router {
         }
 
         // Middleware 
+        $authUser = null;
         if ($route['middleware']) {
-            $tokenauth=new TokenAuth($this->db);
-            $tokenauth->handle();
+            //always check that user is logined and has token 
+            $tokenAuth=new TokenAuth($this->db);
+            $authUser = $tokenAuth->handle();
+
+            //then we check that our middle ware is admin or not
+            if ($route['middleware']==='admin'){
+                $role= new Authorization($this->db);
+                $role_admin=$role->check_role($authUser);
+                if (!$role_admin){
+                    abort(403,'access denied only for admin');
+                }
+            }
         }
 
         //Controller + Action
@@ -98,53 +111,16 @@ class Router {
 
         // if we have params id in uri 
         if ($params) {
-            return $controller->$action($params['id']);
+            return $controller->$action($params['id'], $authUser);
         }
 
-        return $controller->$action();
+        return $controller->$action($authUser); 
     }
     
     $this->abort(404,$message="no matching router uri found ");
 }
 
-    public function routeee($uri, $method){
-        foreach ($this->routes as $route) {
-       
-            $routeParts = explode('/', $route['uri']);
-            $uriParts   = explode('/', $uri);
-
-            $params = [];
-
-            foreach ($routeParts as $key => $routePart) {
-
-                if ($routePart === '{id}') {
-                    $params['id'] = $uriParts[$key];
-                    continue;
-                }
-
-                if ($routePart !== $uriParts[$key]) {
-                    continue 2;
-                }
-}
-            
-        }
-        if ($route["method"] === strtoupper($method)) {
-            if ($route["middleware"]) {
-               // $middleware = Middleware::MAP[$route["middleware"]];
-                //(new $middleware)->handle();
-                Middleware::resolve($route["middleware"]);
-            }
-
-             [$controller, $action] = $route['controller'];
-
-            $controller = new $controller($this->database);
-            if ($params)
-                return $controller->$action($params['id']);
-
-            return $controller->$action();
-        }
-   
-}
+    
 
 
     

@@ -4,17 +4,20 @@ namespace src\Controllers;
 
 use src\Models\Task;
 use src\Core\Database;
+use src\Models\User;   
 
 class Tasks
 {
     protected Task $task;
+    protected User $user;
 
     public function __construct(Database $database)
     {
         $this->task = new Task($database);
+        $this->user = new User($database); 
     }
 
-    public function index()//this method will get all of tasks from Models/Task class and done 
+    public function index($authUser = null)//this method will get all of tasks from Models/Task class and done 
     {
         $tasks = $this->task->all();
         if (!$tasks)
@@ -26,7 +29,7 @@ class Tasks
 
     }
 
-    public function show($id)//this method will get one task 
+    public function show($id,$authUser = null)//this method will get one task 
     {
         $task = $this->task->get($id);
 
@@ -39,7 +42,7 @@ class Tasks
 
     }
 
-    public function store(){//here we create new task
+    public function store($authUser = null){//here we create new task
         $data=file_get_contents('php://input');//here we have to featch body of post man 
 
         $data=json_decode($data,true);//but postman body type is json we have to convert it to arrey php from =>
@@ -52,7 +55,7 @@ class Tasks
 
     }
 
-    public function update($id){//here we update one task by id
+    public function update($id,$authUser = null){//here we update one task by id
         $upt=file_get_contents('php://input');//here we fetch id from postman that we want to update 
 
         $upt=json_decode($upt,true);
@@ -64,7 +67,7 @@ class Tasks
         echo json_encode($task);
     }
 
-    public function destroy($id){
+    public function destroy($id,$authUser = null){
     $task = $this->task->get($id);
 
     if (!$task) 
@@ -75,4 +78,17 @@ class Tasks
     
     echo json_encode(['message'=>"task whith id={$id} has been deleted"]);
 }
+
+      public function myTasks($authUser = null)      
+    {
+        if (!$authUser) {
+            abort(401, 'Authentication required');
+        }
+
+        $tasks = $this->user->tasks($authUser['id']);
+
+        header('Content-Type: application/json');
+        echo json_encode($tasks ?: []);
+    }
+
 }
