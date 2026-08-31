@@ -33,6 +33,8 @@ class TokenAuth {
         }
 
         //if we reach here we find the token and we can safely go to controller
+        //we send id,username,role to the router then sent to the controller
+        return $search_for_token;
         
     }
 

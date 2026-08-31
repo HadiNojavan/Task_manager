@@ -32,7 +32,6 @@ class Login{
 
         //if we reach here we must verify password given from clinet and password from database 
         $userPassword = $this->user->findPassword($username)['password'];
-      // dd($userPassword);
         if (password_verify($password, $userPassword)) {
             // password is correct
             //this create 32random charactor that we use for AUTH  
