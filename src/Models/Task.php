@@ -24,6 +24,7 @@ class Task{
         return $this->database->query('SELECT * FROM tasks WHERE id=?',[$id])->fetch();
     }
 
+
     public function create($data) {//here we create new task in database and then fetch it to see in result that we create new task 
         return $this->database->query('INSERT  INTO tasks (title, description, due_date, priority, status, created_by)
                 VALUES (?, ?, ?, ?, ?, ?) RETURNING *' , [$data['title'],$data['description'],$data['due_date'],$data['priority'],

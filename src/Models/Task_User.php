@@ -37,5 +37,10 @@ class Task_User
         return $this->db->query('SELECT tasks.* FROM tasks JOIN task_user on tasks.id=task_user.task_id WHERE task_user.user_id = ?', [$userid]) ->fetchAll();
     }
 
+    public function userHasTask($userId,$taskId){
+        return $this->db->query("SELECT tasks.* FROM tasks JOIN task_user on tasks.id = task_user.task_id WHERE
+         task_user.user_id = ? AND task_user.task_id = ?",[$userId,$taskId])->fetch();
+    }
+
 
 }

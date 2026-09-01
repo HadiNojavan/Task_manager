@@ -5,19 +5,24 @@ namespace src\Controllers;
 use src\Models\Task;
 use src\Core\Database;
 use src\Models\User;   
+use src\Models\Task_User;
 
 class Tasks
 {
     protected Task $task;
     protected User $user;
+    protected $taskUser;
 
     public function __construct(Database $database)
     {
         $this->task = new Task($database);
         $this->user = new User($database); 
+        $this->taskUser = new Task_User($database);
     }
 
-    public function index($authUser)//this method will get all of tasks from Models/Task class and done 
+
+
+    public function index($authUser)//this method will get all of tasks from Models/Task class and done
     {
         if ($authUser['role']==="admin"){
             $tasks = $this->task->all();
@@ -36,18 +41,34 @@ class Tasks
 
     }
 
-    public function show($id,$authUser = null)//this method will get one task 
-    {
-        $task = $this->task->get($id);
+   public function show($id_task, $authUser){//
 
-        if (!$task)
-            abort(404,"no matching task found in database");
+        $user_id = $authUser['id'];
+
+        // Admin can see every task
+        if ($authUser['role'] === "admin") {
+
+            $task = $this->task->get($id_task);
+
+            if (!$task) {
+                abort(404, "No matching task found in database");
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode($task);
+            return;
+        }
+
+        // Normal user can only see tasks assigned to himself
+        $task = $this->taskUser->userHasTask( $user_id,$id_task);
+
+        if (!$task) {
+            abort(403, "You are not allowed to see this task");
+        }
 
         header('Content-Type: application/json');
-
         echo json_encode($task);
-
-    }
+}
 
     public function store($authUser = null){//here we create new task
         $data=file_get_contents('php://input');//here we have to featch body of post man 
@@ -56,6 +77,8 @@ class Tasks
         $data['created_by'] = $authUser['id'];
 
         $task = $this->task->create($data);
+        $this->taskUser-> assign($task['id'], $task['created_by']);
+
 
         header('Content-Type: application/json');
 
@@ -63,35 +86,66 @@ class Tasks
 
     }
 
-    public function update($id,$authUser = null){//here we update one task by id
-        $upt=file_get_contents('php://input');//here we fetch id from postman that we want to update 
+    public function update($id_task,$authUser){//here we update one task by id
+        $upt=file_get_contents('php://input');//here we fetch id from postman that we want to update
+        header('Content-Type: application/json'); 
 
         $upt=json_decode($upt,true);
 
-        $task = $this->task->update($id,$upt);
+        if ($authUser['role'] === "admin") {
 
-        header('Content-Type: application/json');
+        $task = $this->task->update($id_task,$upt);
+
+        echo json_encode($task);
+        return ;
+    }
+
+        $user_id=$authUser['id'];
+        $task = $this->taskUser->userHasTask( $user_id,$id_task);
+
+        if (!$task) 
+            abort(403, "You are not allowed to update this task ");
+        
+        $task = $this->task->update($id_task,$upt);
 
         echo json_encode($task);
     }
 
-    public function destroy($id,$authUser = null){
-    $task = $this->task->get($id);
+
+    public function destroy($id_task,$authUser){
+    $task = $this->task->get($id_task);
+
+    header('Content-Type: application/json');
 
     if (!$task) 
         abort(404, 'No matching task found in database to delete');
-    $this->task->destroy($id);
 
-    header('Content-Type: application/json');
+    if ($authUser['role'] === "admin") {
+
+        $this->task->destroy($id_task);
+        echo json_encode(['message'=>"task whith id={$id_task} has been deleted"]);
+        return ;
+        }
     
-    echo json_encode(['message'=>"task whith id={$id} has been deleted"]);
+    
+    $user_id=$authUser['id'];
+    $task = $this->taskUser->userHasTask( $user_id,$id_task);
+
+    if (!$task) 
+        abort(403, "You are not allowed to delete this task ");
+
+    $this->task->destroy($id_task);
+    echo json_encode(['message'=>"task whith id={$id_task} has been deleted"]);
+    
 }
+
+
 
       public function myTasks($authUser = null)      
     {
-        if (!$authUser) {
+        if (!$authUser) 
             abort(401, 'Authentication required');
-        }
+        
 
         $tasks = $this->user->tasks($authUser['id']);
 
