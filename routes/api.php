@@ -17,13 +17,15 @@ use src\Controllers\Users;
 //$router->patch('/api/tasks/{id}', [Tasks::class, 'update'])->only('auth');//this update out task by id
 //$router->delete('/api/tasks/{id}', [Tasks::class, 'destroy'])->only('auth');//here we can delete one task by id 
 
-$router->post('/api/register', [Register::class, 'register_new_user']);//to register new user
 
-$router->post('/api/login', [Login::class, 'login']);
 
 
 $router->get('/api/my-tasks', [Tasks::class, 'myTasks'])->only('auth');
 
+
+
+$router->post('/api/register', [Register::class, 'register_new_user'])->only('guest');//to register new user
+$router->post('/api/login', [Login::class, 'login'])->only('guest');
 
 //here admin get all user info 
 $router->get('/api/users', [Users::class, 'all'])->only('admin');

@@ -26,30 +26,64 @@ class Task{
 
 
     public function create($data) {//here we create new task in database and then fetch it to see in result that we create new task 
-        return $this->database->query('INSERT  INTO tasks (title, description, due_date, priority, status, created_by)
+        try{
+            return $this->database->query('INSERT  INTO tasks (title, description, due_date, priority, status, created_by)
                 VALUES (?, ?, ?, ?, ?, ?) RETURNING *' , [$data['title'],$data['description'],$data['due_date'],$data['priority'],
                     $data['status'],$data['created_by']]
             )->fetch();
     }
 
+        catch (\PDOException $e){
+                $bug = [ "message" => $e->getMessage(), "PDO CODE" => $e->getCode()];
+                 echo json_encode($bug);
+                 die();
+            }
+        }
+        
+        
+
     public function update($id,$upt){//first we have to get columns of our table to update table 
-        $task=$this->get($id);
+        try{
+            $task=$this->get($id);
 
-        $allowedKeys=$this->get_key_columns();//we get columns that are exit in table 
+            $allowedKeys=$this->get_key_columns();//we get columns that are exit in table 
 
-        foreach ($upt as $key => $value){
+            foreach ($upt as $key => $value){
 
-            if (in_array($key, $allowedKeys))//so client can not add another columns like id 
-                $this->database->query("UPDATE tasks SET $key = ? WHERE id=?", [$value,$id]);
+                if (in_array($key, $allowedKeys))//so client can not add another columns like id 
+                    $this->database->query("UPDATE tasks SET $key = ? WHERE id=?", [$value,$id]);
+            }
+
+            return $this->get($id);
+
         }
 
-        return $this->get($id);
+        catch (\PDOException $e) {
+
+        $bug = ["message" => $e->getMessage(),"PDO CODE" => $e->getCode() ];
+        echo json_encode($bug);
+        die();
+    }
+
+        
     }
 
 
      public function destroy($id){
 
-        $this->database->query("DELETE FROM tasks WHERE id =?", [$id]);
+        try{
+            $this->database->query("DELETE FROM tasks WHERE id =?", [$id]);
+        }
+
+        catch (\PDOException $e) {
+
+        $bug = ["message" => $e->getMessage(),"PDO CODE" => $e->getCode()];
+
+        echo json_encode($bug);
+        die();
+    }
+
+        
      }
      
     public function get_key_columns(){

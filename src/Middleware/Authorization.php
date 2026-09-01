@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Controllers;
+namespace src\Middleware;
 
 use src\Models\Task;
 use src\Core\Database;

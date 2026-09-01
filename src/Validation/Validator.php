@@ -34,4 +34,5 @@ class Validator
 
         return strlen($value) >= $min && strlen($value) <= $max;
     }
+
 }

@@ -6,7 +6,7 @@ namespace src\Core;
 
 */
 use src\Middleware\TokenAuth;
-use src\Controllers\Authorization;
+use src\Middleware\Authorization;
 
 class Router {
 
@@ -90,6 +90,7 @@ class Router {
         // Middleware 
         $authUser = null;
         if ($route['middleware']) {
+            
             //always check that user is logined and has token 
             $tokenAuth=new TokenAuth($this->db);
             $authUser = $tokenAuth->handle();

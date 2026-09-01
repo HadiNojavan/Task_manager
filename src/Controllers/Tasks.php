@@ -72,15 +72,12 @@ class Tasks
 
     public function store($authUser = null){//here we create new task
         $data=file_get_contents('php://input');//here we have to featch body of post man 
+         header('Content-Type: application/json');
 
         $data=json_decode($data,true);//but postman body type is json we have to convert it to arrey php from =>
         $data['created_by'] = $authUser['id'];
-
         $task = $this->task->create($data);
-        $this->taskUser-> assign($task['id'], $task['created_by']);
-
-
-        header('Content-Type: application/json');
+        $this->taskUser-> assign($task['id'], $task['created_by']);       
 
         echo json_encode($task);
 
