@@ -13,10 +13,40 @@ class Task{
     }
 
     public function all()//this method will featch all data from database
-    {
-        return $this->database
-            ->query('SELECT * FROM tasks')
-            ->fetchAll();
+    {   
+        
+        $allowedFilters = ['status','priority',  'search'];
+        $querys=$_GET;
+        $keys = [];
+        $values = [];
+
+        foreach($querys as $key=>$value){
+            if (in_array($key,$allowedFilters)){
+                $keys []=$key;
+                $values[] = $value;
+            }
+        }
+
+        if (!$keys)//it means we dont have any query or given query is invalid
+            return $this->database ->query('SELECT * FROM tasks') ->fetchAll();
+
+        $cond = "WHERE ";
+        $parameter = [];
+
+        foreach($keys as $index => $key) {
+            if ($key==="search"){
+                $cond .= "title ILIKE ? AND ";
+                $parameter[] = "%{$values[$index]}%";
+                continue;
+            }
+            $cond .= "{$key}=? AND ";
+            $parameter[] = $values[$index];
+        }
+
+        $cond = rtrim($cond, " AND ");
+        
+        return $this->database ->query("SELECT * FROM tasks ".$cond,$parameter) ->fetchAll();
+        
     }
 
     public function get($id)//we will get one task by id 
