@@ -59,6 +59,9 @@ class User{
             ->fetch();
     }
     
+    public function deletetoken($userId){
+        $this->db->query("UPDATE users SET api_token=? WHERE id = ?",[null,$userId]);
+    }
 
     }
     

@@ -59,11 +59,10 @@ class Task{
         }
 
         catch (\PDOException $e) {
-
-        $bug = ["message" => $e->getMessage(),"PDO CODE" => $e->getCode() ];
-        echo json_encode($bug);
-        die();
-    }
+            $bug = ["message" => $e->getMessage(),"PDO CODE" => $e->getCode() ];
+            echo json_encode($bug);
+            die();
+        }
 
         
     }
@@ -76,7 +75,7 @@ class Task{
         }
 
         catch (\PDOException $e) {
-
+            
         $bug = ["message" => $e->getMessage(),"PDO CODE" => $e->getCode()];
 
         echo json_encode($bug);

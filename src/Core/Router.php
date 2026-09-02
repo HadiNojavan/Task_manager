@@ -10,12 +10,16 @@ use src\Middleware\Authorization;
 
 class Router {
 
-    protected $routes=[];
+    protected $routes = [];
     protected Database $db;
+    protected TokenAuth $tokenAuth;
+    protected Authorization $authorization;
 
     public function __construct(Database $db)
     {
         $this->db = $db;
+        $this->tokenAuth = new TokenAuth($db);
+        $this->authorization = new Authorization($db);
     }
 
     protected function add($method,$uri,$controller){
@@ -90,20 +94,27 @@ class Router {
         // Middleware 
         $authUser = null;
         if ($route['middleware']) {
-            
-            //always check that user is logined and has token 
-            $tokenAuth=new TokenAuth($this->db);
-            $authUser = $tokenAuth->handle();
 
-            //then we check that our middle ware is admin or not
-            if ($route['middleware']==='admin'){
-                $role= new Authorization($this->db);
-                $role_admin=$role->check_role($authUser);
-                if (!$role_admin){
-                    abort(403,'access denied: only for admin');
-                }
-            }
+    if ($route['middleware'] === "guest") {
+        $isguest = $this->tokenAuth->isguest();
+        if (!$isguest)
+            abort(400,"please logout first");
+    }
+
+     else {
+        // always check that user is logged in and has token
+        $authUser = $this->tokenAuth->handle();
+
+        // check if middleware is admin
+        if ($route['middleware'] === 'admin') {
+
+            $role_admin = $this->authorization->check_role($authUser);
+
+            if (!$role_admin) 
+                abort(403, 'access denied: only for admin');
         }
+    }
+}
 
         //Controller + Action
         [$controller, $action] = $route['controller'];

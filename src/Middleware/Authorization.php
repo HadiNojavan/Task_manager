@@ -21,4 +21,5 @@ class  Authorization{
         $role=$auth_user['role'];
         return $role==='admin';
     }
+
 }

@@ -38,6 +38,28 @@ class TokenAuth {
         
     }
 
+    public function isguest(){
+        $headers = getallheaders();// "Bearer dkfjf3xff......"
+        $authHeader = $headers['Authorization'] ?? '';
+        if (!str_starts_with($authHeader, 'Bearer ')) {
+            // there is no token in header 
+            return true;
+        }
+
+        $token = substr($authHeader, 7);
+        
+        $user= new User($this->db);
+        $search_for_token=$user->findtoken($token);
+        
+        //check if token is not valid and not exits in table so its guest
+        if(!$search_for_token)
+            return true;
+        
+        //means the token is valid and user is not guest 
+        return false;
+
+    }
+
 
 
 

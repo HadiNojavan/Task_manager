@@ -46,4 +46,5 @@ class Login{
         //password is not correct
         echo json_encode(['error'=>"your password for account {$username} is not correct. your given password: {$password}"]);
     }
+
 }
