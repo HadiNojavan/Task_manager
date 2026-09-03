@@ -28,9 +28,9 @@ class Task{
         }
 
         if (!$keys)//it means we dont have any query or given query is invalid
-            return $this->database ->query('SELECT * FROM tasks') ->fetchAll();
+            return $this->database ->query('SELECT * FROM tasks WHERE deleted_at IS null') ->fetchAll();
 
-        $cond = "WHERE ";
+        $cond = " WHERE deleted_at IS null ";
         $parameter = [];
 
         foreach($keys as $index => $key) {
@@ -45,12 +45,16 @@ class Task{
 
         $cond = rtrim($cond, " AND ");
         
-        return $this->database ->query("SELECT * FROM tasks ".$cond,$parameter) ->fetchAll();
+        return $this->database ->query("SELECT * FROM tasks".$cond,$parameter) ->fetchAll();
         
     }
 
-    public function get($id)//we will get one task by id 
+    public function get($id)//we will get one task by id that is not deleted 
     {
+        return $this->database->query('SELECT * FROM tasks WHERE id=? AND deleted_at IS null',[$id])->fetch();
+    }
+
+    public function find_task($id){//even the task that is deleted
         return $this->database->query('SELECT * FROM tasks WHERE id=?',[$id])->fetch();
     }
 
@@ -101,7 +105,7 @@ class Task{
      public function destroy($id){
 
         try{
-            $this->database->query("DELETE FROM tasks WHERE id =?", [$id]);
+            $this->database->query("UPDATE tasks SET deleted_at = CURRENT_TIMESTAMP WHERE id=?", [$id]);
         }
 
         catch (\PDOException $e) {
@@ -117,7 +121,7 @@ class Task{
      
     public function get_key_columns(){
         
-    $not_editable_columns = [ 'id', 'created_by', 'created_at'];//here we can not allow client to update or create id columns
+    $not_editable_columns = [ 'id', 'created_by', 'created_at',"deleted_at"];//here we can not allow client to update or create id columns
 
     $res = [];
 
@@ -134,7 +138,21 @@ class Task{
 }
 
     public function task_id($taskid){
-        return $this->database->query("SELECT * FROM tasks WHERE id=?",[$taskid])->fetch();
+        return $this->database->query("SELECT * FROM tasks WHERE id=? AND deleted_at IS NULL",[$taskid])->fetch();
+    }
+
+    public function restore($id_task){
+           try{
+            $this->database->query("UPDATE tasks SET deleted_at = null WHERE id=?", [$id_task]);
+        }
+
+        catch (\PDOException $e) {
+            
+        $bug = ["message" => $e->getMessage(),"PDO CODE" => $e->getCode()];
+
+        echo json_encode($bug);
+        die();
+    }
     }
 
 }
