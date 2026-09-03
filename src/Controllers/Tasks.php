@@ -150,4 +150,25 @@ class Tasks
         echo json_encode($tasks ?: []);
     }
 
+    public function restore($id_task,$authUser){
+        //check if this task exits 
+        $task = $this->task->find_task($id_task);
+
+        if (!$task) 
+                abort(404, "No matching task found in database");
+
+        //check if this task is deleted 
+        $isdeleted=$task["deleted_at"];
+
+        if(!$isdeleted)
+            abort(400,"this task is not deleted yet");
+
+        //if we reach here we can restore it 
+        $this->task->restore($id_task);
+         $task = $this->task->get($id_task);
+
+        header('Content-Type: application/json');
+        echo json_encode($task);
+    }
+
 }

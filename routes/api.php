@@ -28,6 +28,8 @@ $router->get('/api/users', [Users::class, 'all'])->only('admin');
 $router->post('/api/tasks/{id}/assign', [TaskManagement::class, 'assign'])->only('admin');
 //here admin can add new admin 
 $router->post('/api/add_admin', [Users::class, 'add_Admin'])->only('admin');
+//here admin can restore items that has been deleted wrong => soft delete 
+$router->patch('/api/tasks/{id}/restore', [Tasks::class, 'restore'])->only('admin');
 
 //this api can used by user or admin 
 $router->get('/api/tasks', [Tasks::class, 'index'])->only('auth');// here we get all tasks from database
