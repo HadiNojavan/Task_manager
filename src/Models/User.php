@@ -12,18 +12,17 @@ class User{
         $this->db=$db;
     }
 
-    public function create($username, $password){//create new user in db
+    public function create($username, $password,$admin=false){//create new user in db
 
-    return $this->db->query( "INSERT INTO users (username, password)VALUES (?, ?) RETURNING *",
-            [$username, $password])
-        ->fetch();
+    if ($admin===true)
+        return $this->db->query( "INSERT INTO users (username, password, role)VALUES (?, ?,?) RETURNING *", [$username, $password,"admin"])->fetch();
+
+    return $this->db->query( "INSERT INTO users (username, password)VALUES (?, ?) RETURNING *", [$username, $password])->fetch();
 }
 
     public function findByUsername($username){//to check that our new username exits in db or not 
 
-        return $this->db
-            ->query('SELECT username FROM users WHERE username=?',[$username])
-            ->fetch();
+        return $this->db ->query('SELECT username FROM users WHERE username=?',[$username]) ->fetch();
     }
 
     public function findpassword($username){//to check that our new username exits in db or not 

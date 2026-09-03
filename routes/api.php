@@ -26,6 +26,8 @@ $router->get('/api/users', [Users::class, 'all'])->only('admin');
 
 //here admin assing one task to many users 
 $router->post('/api/tasks/{id}/assign', [TaskManagement::class, 'assign'])->only('admin');
+//here admin can add new admin 
+$router->post('/api/add_admin', [Users::class, 'add_Admin'])->only('admin');
 
 //this api can used by user or admin 
 $router->get('/api/tasks', [Tasks::class, 'index'])->only('auth');// here we get all tasks from database
