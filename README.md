@@ -277,9 +277,9 @@ Authorization: Bearer {admin-token}
 ```
 ---
 
-#this endpoint can used only by admin to filter result 
+ 
 ### Query Parameters
-
+#this endpoint can used only by admin to filter result
 The `GET /api/tasks` endpoint supports filtering and searching tasks.
 
 Available parameters:
