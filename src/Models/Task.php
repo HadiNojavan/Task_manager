@@ -30,7 +30,7 @@ class Task{
         if (!$keys)//it means we dont have any query or given query is invalid
             return $this->database ->query('SELECT * FROM tasks WHERE deleted_at IS null') ->fetchAll();
 
-        $cond = " WHERE deleted_at IS null ";
+       $cond = " WHERE deleted_at IS null AND ";
         $parameter = [];
 
         foreach($keys as $index => $key) {

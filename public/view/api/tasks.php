@@ -26,8 +26,8 @@ $tasks = json_decode($response->getBody(), true);
 
 <body>
 
-   
-<h1>My Tasks</h1>
+<h1>hello <?php $_SESSION["username"] ?? "" ?></h1>
+<h2>My Tasks</h2>
 <a href="../create-task.html">Create Task</a>
 <p style="color: red;">to delete or edit task click on title</p>    
 
