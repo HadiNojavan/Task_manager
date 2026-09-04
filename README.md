@@ -275,5 +275,21 @@ Restore a soft-deleted task.
 ```
 Authorization: Bearer {admin-token}
 ```
+this endpoint can used only by admin to filter result 
+### Query Parameters
 
+The `GET /api/tasks` endpoint supports filtering and searching tasks.
+
+Available parameters:
+
+- `status` `pending`, `in_progress`, `completed` 
+- `priority` `low`, `medium`, `high`
+- `search` to search in title 
+
+### Examples
+
+Filter by status:
+
+```text
+GET /api/tasks?status=completed
 ```
