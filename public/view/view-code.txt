@@ -1,0 +1,495 @@
+./login.html
+
+===== FILE: ./login.html =====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+</head>
+<body>
+    <h1>this is login page</h1>
+    <form action="api/login.php" id="login" method="post">
+        <input type="text"id="username" name="username" placeholder="Username" required><br><br>
+        <input type="password"id="password" name="password"  placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <a href="register.html">
+   Create account
+    </a>
+</body>
+</html>./show.php
+
+===== FILE: ./show.php =====
+<?php
+
+session_start();
+require_once "../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+if (!isset($_SESSION['token'])) {
+    header("Location: login.html");
+    exit;
+}
+
+$id = $_GET['id'];
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->get("/api/tasks/$id", ['headers' => ['Authorization' => 'Bearer ' . $_SESSION['token']]]);
+
+$task = json_decode($response->getBody(), true);
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Task</title>
+</head>
+
+<body>
+
+<h1>Task Details</h1>
+
+<h2>
+    Title: <?= htmlspecialchars($task['title']) ?>
+</h2>
+
+<p>
+    Description: <?= htmlspecialchars($task['description']) ?>
+</p>
+
+<p>
+    Status: <?= htmlspecialchars($task['status']) ?>
+</p>
+
+<p>
+    Priority: <?= htmlspecialchars($task['priority']) ?>
+</p>
+
+<p>
+    Due date: <?= htmlspecialchars($task['due_date']) ?>
+</p>
+
+<a class="text-red" href="api/delete.php?id=<?= $task['id'] ?>">Delete this task </a>
+<br>
+<a href="update.php/?id=<?= $task['id'] ?>">Update this task</a>
+</body>
+</html>./create-task.html
+
+===== FILE: ./create-task.html =====
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+</head>
+
+<body>
+
+<h1>Create Task</h1>
+
+<form action="api/create-task.php" method="post">
+
+    <label>Title</label>
+    <input type="text" name="title" required>
+
+    <br><br>
+
+    <label>Description</label>
+    <textarea name="description"></textarea>
+
+    <br><br>
+
+    <label>Due Date</label>
+    <input type="date" name="due_date" required>
+
+    <br><br>
+
+    <label>Priority</label>
+    <select name="priority" required>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+    </select>
+
+    <br><br>
+
+    <label>Status</label>
+    <select name="status" required>
+        <option value="pending">Pending</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Completed</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Create Task</button>
+
+</form>
+
+</body>
+
+</html>./index.html
+
+===== FILE: ./index.html =====
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+</head>
+
+<body>
+
+<div align="right">
+
+    <a href="login.html">Login</a>
+    |
+    <a href="register.html">Register</a>
+
+</div>
+
+
+<h1>Welcome to Task Manager</h1>
+
+<p>Manage your tasks easily.</p>
+
+</body>
+
+</html>./update.php
+
+===== FILE: ./update.php =====
+<?php
+
+session_start();
+require_once "../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+if (!isset($_SESSION['token'])) {
+    header("Location: login.html");
+    exit;
+}
+
+$id = $_GET['id'];
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->get("/api/tasks/$id", ['headers' => ['Authorization' => 'Bearer ' . $_SESSION['token']]]);
+
+$task = json_decode($response->getBody(), true);
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Update Task</title>
+</head>
+
+<body>
+
+<h1>Update Task</h1>
+
+<form action="api/update.php?id=<?= $task['id'] ?>" method="post">
+
+    <input type="text" name="title" value="<?= htmlspecialchars($task['title']) ?>" required>
+
+    <br><br>
+
+    <textarea name="description"><?= htmlspecialchars($task['description']) ?></textarea>
+
+    <br><br>
+
+    <input type="date" name="due_date" value="<?= htmlspecialchars($task['due_date']) ?>" required>
+
+    <br><br>
+
+    <select name="priority" required>
+        <option value="low" <?= $task['priority'] === 'low' ? 'selected' : '' ?>>Low</option>
+        <option value="medium" <?= $task['priority'] === 'medium' ? 'selected' : '' ?>>Medium</option>
+        <option value="high" <?= $task['priority'] === 'high' ? 'selected' : '' ?>>High</option>
+    </select>
+
+    <br><br>
+
+    <select name="status" required>
+        <option value="pending" <?= $task['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
+        <option value="in_progress" <?= $task['status'] === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
+        <option value="completed" <?= $task['status'] === 'completed' ? 'selected' : '' ?>>Completed</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Update Task</button>
+
+</form>
+
+</body>
+</html>./register.html
+
+===== FILE: ./register.html =====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+</head>
+<body>
+    <h1>this is register page</h1>
+    <form action="api/register.php" id="login" method="post">
+        <input type="text"id="username" name="username" placeholder="Username" required><br><br>
+        <input type="password"id="password" name="password"  placeholder="Password" required>
+        <button type="submit">register</button>
+    </form>
+
+    <a href="login.html">
+   login here
+    </a>
+</body>
+</html>./api/login.php
+
+===== FILE: ./api/login.php =====
+<?php
+
+session_start();
+require_once "../../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->post('/api/login', ['json' => ['username' => $_POST['username'], 'password' => $_POST['password']]]);
+$data = json_decode($response->getBody(), true);
+
+if (isset($data['token'])) {
+    $_SESSION['token'] = $data['token'];
+    header("Location: http://localhost:8080/api/tasks.php");
+    exit;
+}
+
+echo "Login failed";
+echo "<br>";
+echo $response->getBody();./api/delete.php
+
+===== FILE: ./api/delete.php =====
+<?php
+
+session_start();
+require_once "../../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+if (!isset($_SESSION['token'])) {
+    header("Location: ../login.html");
+    exit;
+}
+
+$id = $_GET['id'];
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->delete("/api/tasks/$id", [
+    'headers' => [
+        'Authorization' => 'Bearer ' . $_SESSION['token']
+    ]
+]);
+
+$data = json_decode($response->getBody(), true);
+
+header("Location: tasks.php");
+exit;./api/create-task.php
+
+===== FILE: ./api/create-task.php =====
+<?php
+
+session_start();
+require_once "../../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+if (!isset($_SESSION['token'])) {
+    header("Location: ../login.html");
+    exit;
+}
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->post('/api/tasks', [  'headers' => [ 'Authorization' => 'Bearer ' . $_SESSION['token']], 'json' => [
+        'title' => $_POST['title'],
+        'description' => $_POST['description'],
+        'due_date' => $_POST['due_date'],
+        'priority' => $_POST['priority'],
+        'status' => $_POST['status']
+    ]
+]);
+
+$task = json_decode($response->getBody(), true);
+
+echo "<h1>Task created successfully</h1>";
+echo "<h2>" . htmlspecialchars($task['title']) . "</h2>";
+echo "<p>" . htmlspecialchars($task['description']) . "</p>";
+echo "<a href='tasks.php'>Back to tasks</a>";./api/show.php
+
+===== FILE: ./api/show.php =====
+./api/update.php
+
+===== FILE: ./api/update.php =====
+<?php
+
+session_start();
+require_once "../../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+if (!isset($_SESSION['token'])) {
+    header("Location: ../index.html");
+    exit;
+}
+
+$id = $_GET['id'];
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->patch("/api/tasks/$id", ['headers' => [   'Authorization' => 'Bearer ' . $_SESSION['token']],'json' => [
+        'title' => $_POST['title'],
+        'description' => $_POST['description'],
+        'due_date' => $_POST['due_date'],
+        'priority' => $_POST['priority'],
+        'status' => $_POST['status']
+    ]
+]);
+
+$task = json_decode($response->getBody(), true);
+
+header("Location: ../show.php?id=$id");
+exit;./api/logout.php
+
+===== FILE: ./api/logout.php =====
+<?php
+
+session_start();
+require_once "../../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+if (!isset($_SESSION['token'])) {
+    header("Location: http://localhost:8080/");
+    exit;
+}
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+$response = $client->post('/api/logout', ['headers' => ['Authorization' => 'Bearer ' . $_SESSION['token']]]);
+$data = json_decode($response->getBody(), true);
+
+unset($_SESSION['token']);
+
+header("Location: http://localhost:8080/");
+exit;./api/register.php
+
+===== FILE: ./api/register.php =====
+<?php
+
+session_start();
+require_once "../../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->post('/api/register', ['json' => ['username' => $_POST['username'], 'password' => $_POST['password']]]);
+$data = json_decode($response->getBody(), true);
+
+if (isset($data['id'])) {
+    $response = $client->post('/api/login', ['json' => ['username' => $_POST['username'], 'password' => $_POST['password']]]);
+    $loginData = json_decode($response->getBody(), true);
+
+    if (isset($loginData['token'])) {
+        $_SESSION['token'] = $loginData['token'];
+        header("Location: http://localhost:8080/api/tasks.php");
+        exit;
+    }
+}
+
+echo "Register failed";
+echo "<br>";
+echo $response->getBody();./api/tasks.php
+
+===== FILE: ./api/tasks.php =====
+<?php
+
+session_start();
+require_once "../../../vendor/autoload.php";
+use GuzzleHttp\Client;
+
+if (!isset($_SESSION['token'])) {
+    header("Location: http://localhost:8080/login.html");
+    exit;
+}
+
+$client = new Client(['base_uri' => 'http://localhost:8082']);
+
+$response = $client->get('/api/tasks', ['headers' => ['Authorization' => 'Bearer ' . $_SESSION['token']]]);
+$tasks = json_decode($response->getBody(), true);
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Tasks</title>
+</head>
+
+<body>
+
+   
+<h1>My Tasks</h1>
+<a href="../create-task.html">Create Task</a>
+<p style="color: red;">to delete or edit task click on title</p>    
+
+ <form action="../logout.php" method="post" style="position: absolute; top: 20px; right: 20px;">
+    <button type="submit">Logout</button>
+</form>
+
+
+<ul>
+
+<?php foreach ($tasks as $task) { ?>
+
+    <li>
+
+        <h3>
+            Title:
+            <a href="../show.php?id=<?= $task['id'] ?>">
+                <?= htmlspecialchars($task['title']) ?>
+            </a>
+        </h3>
+
+        <p>
+            <?= htmlspecialchars($task['description']) ?>
+        </p>
+
+        <p>
+            Status: <?= htmlspecialchars($task['status']) ?>
+        </p>
+
+        <p>
+            Priority: <?= htmlspecialchars($task['priority']) ?>
+        </p>
+
+    </li>
+
+<?php } ?>
+
+</ul>
+
+</body>
+</html>

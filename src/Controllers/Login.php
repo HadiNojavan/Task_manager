@@ -39,7 +39,7 @@ class Login{
             $this->user->saveToken($username, $token);
 
             http_response_code(200);
-            echo json_encode(['message' => 'Login successful','token' => $token]);
+            echo json_encode(['message' => 'Login successful','token' => $token,"role"=>$user['role'],'username'=>$user['username']]);
             return;
         }
 

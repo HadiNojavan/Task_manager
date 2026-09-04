@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+</head>
+
+<body>
+
+<h1>Create Task</h1>
+
+<form action="api/create-task.php" method="post">
+
+    <label>Title</label>
+    <input type="text" name="title" required>
+
+    <br><br>
+
+    <label>Description</label>
+    <textarea name="description"></textarea>
+
+    <br><br>
+
+    <label>Due Date</label>
+    <input type="date" name="due_date" required>
+
+    <br><br>
+
+    <label>Priority</label>
+    <select name="priority" required>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+    </select>
+
+    <br><br>
+
+    <label>Status</label>
+    <select name="status" required>
+        <option value="pending">Pending</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Completed</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Create Task</button>
+
+</form>
+
+</body>
+
+</html>
