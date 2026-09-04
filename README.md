@@ -295,6 +295,7 @@ Filter by status:
 ```text
 GET /api/tasks?status=completed
 GET /api/tasks?status=completed&search=php
+GET /api/tasks?status=pending&priority=high&search=php
 ```
 ---
 # Frontend
