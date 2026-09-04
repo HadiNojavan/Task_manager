@@ -303,17 +303,20 @@ The frontend is a simple HTML interface that communicates with the backend using
 Running the Project
 Start the backend API:
 
-text
+
 php -S localhost:8082 -t public
+
 The API will be available at http://localhost:8082
 
 Start the frontend:
 
-text
+
 php -S localhost:8080 -t public/view
+
 The frontend will be available at http://localhost:8080
 
 Access Points
+
 Frontend: http://localhost:8080
 
 Backend: http://localhost:8082
