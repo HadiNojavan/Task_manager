@@ -12,7 +12,7 @@ class Task{
         $this->database=$database;
     }
 
-    public function all()//this method will featch all data from database
+    public function all($authUser=null)//this method will featch all data from database
     {   
         
         $allowedFilters = ['status','priority',  'search'];
@@ -154,6 +154,10 @@ class Task{
         die();
     }
     }
+
+    public function deleted($authUser=null){
+    return $this->database->query('SELECT * FROM tasks WHERE deleted_at IS NOT NULL')->fetchAll();
+}
 
 }
 

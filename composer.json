@@ -1,8 +1,12 @@
 {
     "autoload": {
         "psr-4": {
-            "config\\":"config/",
-            "src\\":"src/"
+            "config\\": "config/",
+            "src\\": "src/"
         }
+    },
+
+    "require": {
+        "guzzlehttp/guzzle": "^7.15"
     }
 }

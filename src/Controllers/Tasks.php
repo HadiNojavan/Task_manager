@@ -171,4 +171,11 @@ class Tasks
         echo json_encode($task);
     }
 
+    public function deleted($authUser=null){
+        $tasks = $this->task->deleted();
+
+        header('Content-Type: application/json');
+        echo json_encode($tasks);
+}
+
 }

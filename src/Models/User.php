@@ -22,7 +22,7 @@ class User{
 
     public function findByUsername($username){//to check that our new username exits in db or not 
 
-        return $this->db ->query('SELECT username FROM users WHERE username=?',[$username]) ->fetch();
+        return $this->db ->query('SELECT username,role FROM users WHERE username=?',[$username]) ->fetch();
     }
 
     public function findpassword($username){//to check that our new username exits in db or not 

@@ -34,7 +34,7 @@ class Users
     
     }
 
-    public function add_admin(){
+    public function add_admin($authUser=null){
         $data = file_get_contents('php://input');//we get username and password from postman body
         $data = json_decode($data, true);
         header('Content-Type: application/json');
